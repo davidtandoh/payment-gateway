@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+  <!-- Local development: human-readable logs with correlation ID -->
+  <springProfile name="!docker">
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder>
+        <pattern>%d{ISO8601} [%X{correlationId}] %-5level %logger{36} - %msg%n</pattern>
+      </encoder>
+    </appender>
+    <root level="INFO">
+      <appender-ref ref="CONSOLE"/>
+    </root>
+  </springProfile>
+
+  <!-- Production / Docker: structured JSON logs for log aggregators (ELK, Datadog, etc.) -->
+  <springProfile name="docker">
+    <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+      <!-- All MDC keys are included automatically:
+           correlationId, paymentId, cardLastFour,
+           httpMethod, httpPath, httpStatus, durationMs -->
+    </appender>
+    <root level="INFO">
+      <appender-ref ref="JSON"/>
+    </root>
+  </springProfile>
+
+</configuration>

@@ -1,0 +1,22 @@
+#!/bin/sh
+# Pre-commit hook: compile and run tests before allowing commit
+
+echo "Running pre-commit checks..."
+
+# Compile
+echo "Compiling..."
+./gradlew compileJava compileTestJava --quiet
+if [ $? -ne 0 ]; then
+    echo "Compilation failed. Commit aborted."
+    exit 1
+fi
+
+# Run tests
+echo "Running tests..."
+./gradlew test --quiet
+if [ $? -ne 0 ]; then
+    echo "Tests failed. Commit aborted."
+    exit 1
+fi
+
+echo "All checks passed."

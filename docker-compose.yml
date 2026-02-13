@@ -6,10 +6,26 @@ services:
     image: bbyars/mountebank:2.8.1
     ports:
       - "2525:2525"
-      - "8080:8080"
+      - "8081:8080"
     command: --configfile /imposters/bank_simulator.ejs --allowInjection
     volumes:
       - type: bind
         source: ./imposters
         target: /imposters
-      
+
+  payment_gateway:
+    container_name: payment_gateway
+    build: .
+    ports:
+      - "8090:8090"
+    environment:
+      - BANK_SIMULATOR_URL=http://bank_simulator:8080
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - bank_simulator
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8090/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s

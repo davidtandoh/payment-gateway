@@ -2,16 +2,14 @@ package com.checkout.payment.gateway.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class PostPaymentRequest {
+public class BankPaymentRequest {
 
   @JsonProperty("card_number")
   private String cardNumber;
-  @JsonProperty("expiry_month")
-  private Integer expiryMonth;
-  @JsonProperty("expiry_year")
-  private Integer expiryYear;
+  @JsonProperty("expiry_date")
+  private String expiryDate;
   private String currency;
-  private Integer amount;
+  private int amount;
   private String cvv;
 
   public String getCardNumber() {
@@ -22,20 +20,12 @@ public class PostPaymentRequest {
     this.cardNumber = cardNumber;
   }
 
-  public Integer getExpiryMonth() {
-    return expiryMonth;
+  public String getExpiryDate() {
+    return expiryDate;
   }
 
-  public void setExpiryMonth(Integer expiryMonth) {
-    this.expiryMonth = expiryMonth;
-  }
-
-  public Integer getExpiryYear() {
-    return expiryYear;
-  }
-
-  public void setExpiryYear(Integer expiryYear) {
-    this.expiryYear = expiryYear;
+  public void setExpiryDate(String expiryDate) {
+    this.expiryDate = expiryDate;
   }
 
   public String getCurrency() {
@@ -46,11 +36,11 @@ public class PostPaymentRequest {
     this.currency = currency;
   }
 
-  public Integer getAmount() {
+  public int getAmount() {
     return amount;
   }
 
-  public void setAmount(Integer amount) {
+  public void setAmount(int amount) {
     this.amount = amount;
   }
 
@@ -64,10 +54,9 @@ public class PostPaymentRequest {
 
   @Override
   public String toString() {
-    return "PostPaymentRequest{" +
+    return "BankPaymentRequest{" +
         "cardNumber='****'" +
-        ", expiryMonth=" + expiryMonth +
-        ", expiryYear=" + expiryYear +
+        ", expiryDate='" + expiryDate + '\'' +
         ", currency='" + currency + '\'' +
         ", amount=" + amount +
         '}';

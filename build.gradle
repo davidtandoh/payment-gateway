@@ -17,11 +17,20 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+    implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+tasks.register('installGitHooks', Copy) {
+    description 'Installs pre-commit hook from scripts/ into .git/hooks/'
+    from('scripts/pre-commit')
+    into('.git/hooks')
+    fileMode 0755
 }

@@ -1,31 +1,35 @@
 package com.checkout.payment.gateway.service;
 
-import com.checkout.payment.gateway.exception.EventProcessingException;
 import com.checkout.payment.gateway.model.PostPaymentRequest;
 import com.checkout.payment.gateway.model.PostPaymentResponse;
-import com.checkout.payment.gateway.repository.PaymentsRepository;
 import java.util.UUID;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
-@Service
-public class PaymentGatewayService {
+/**
+ * Defines the contract for payment processing operations.
+ *
+ * <p>Implementations handle the full lifecycle: validation, bank communication,
+ * response mapping, and storage. The interface allows the controller to depend
+ * on an abstraction rather than a concrete implementation (Dependency Inversion Principle).
+ */
+public interface PaymentGatewayService {
 
-  private static final Logger LOG = LoggerFactory.getLogger(PaymentGatewayService.class);
+  /**
+   * Retrieves a previously processed payment by ID.
+   *
+   * @param id the payment UUID
+   * @return the stored payment response
+   * @throws com.checkout.payment.gateway.exception.EventProcessingException if no payment exists
+   */
+  PostPaymentResponse getPaymentById(UUID id);
 
-  private final PaymentsRepository paymentsRepository;
-
-  public PaymentGatewayService(PaymentsRepository paymentsRepository) {
-    this.paymentsRepository = paymentsRepository;
-  }
-
-  public PostPaymentResponse getPaymentById(UUID id) {
-    LOG.debug("Requesting access to to payment with ID {}", id);
-    return paymentsRepository.get(id).orElseThrow(() -> new EventProcessingException("Invalid ID"));
-  }
-
-  public UUID processPayment(PostPaymentRequest paymentRequest) {
-    return UUID.randomUUID();
-  }
+  /**
+   * Processes a payment request through the acquiring bank.
+   *
+   * @param request the merchant's payment request
+   * @param idempotencyKey optional key to prevent duplicate processing; may be null
+   * @return the payment result including a generated ID and AUTHORIZED/DECLINED status
+   * @throws com.checkout.payment.gateway.exception.InvalidPaymentRequestException if validation fails
+   * @throws com.checkout.payment.gateway.exception.BankUnavailableException if the bank is unreachable
+   */
+  PostPaymentResponse processPayment(PostPaymentRequest request, String idempotencyKey);
 }
